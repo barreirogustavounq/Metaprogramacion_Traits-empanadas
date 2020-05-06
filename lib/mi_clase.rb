@@ -1,7 +1,7 @@
-require 'mi_trait'
+require 'trait'
 
 class MiClase
-  include MiTrait
+    include MiTrait
 
   def metodo2(sufijo)
     "mundo" + sufijo

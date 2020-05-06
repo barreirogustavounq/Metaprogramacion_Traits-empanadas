@@ -3,13 +3,13 @@ def trait (nombre, &block)
   Object.const_set(nombre, el_trait)
 end
 
-module MiTrait
+trait :MiTrait do
   def metodo1
     "hola"
   end
 end
 
-module MiOtroTrait
+trait :MiOtroTrait do
   def metodo2
     "mundo"
   end
@@ -24,19 +24,3 @@ trait :SoloDiceChau do
     "chau"
   end
 end
-
-# module SoloDiceChau
-#   def metodo1
-#     "chau"
-#   end
-#
-#   def metodo2
-#     "chau"
-#   end
-# end
-#
-# self.trait(:MiTrait) do
-#   def metodo1
-#     "hola"
-#   end
-# end
