@@ -3,6 +3,18 @@ def trait (nombre, &block)
   Object.const_set(nombre, el_trait)
 end
 
+public
+def + (trait)
+  trait.instance_methods.each do | name |
+    unless self.method_defined? name
+      self.send(:define_method, name) do | *args, &block |
+        trait.instance_method(name).bind(self).call(*args, &block)
+      end
+    end
+  end
+  self
+end
+
 trait :MiTrait do
   # @metodo1 = Proc.new do
   #   "hola"

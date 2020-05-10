@@ -25,11 +25,11 @@ describe 'traits tests' do
     expect(segunda_clase.metodo1).to eq("chau")
   end
 
-  # it 'Testea metodos diferentes de dos traits incluidos en una clase' do
-    # tercer_clase = MiClase3.new
-    # expect(tercer_clase.metodo1).to eq("hola")
-    # expect(tercer_clase.metodo2).to eq("mundo")
-  # end
+  it 'Testea metodos diferentes de dos traits incluidos en una clase' do
+    tercer_clase = MiClase3.new
+    expect(tercer_clase.metodo1).to eq("hola")
+    expect(tercer_clase.metodo2).to eq("mundo")
+  end
 
   # it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
     # mi_clase_con_conflictos = MiClaseConConflictos.new

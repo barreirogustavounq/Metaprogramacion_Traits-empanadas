@@ -30,11 +30,9 @@ class MiClase2
   uses MiTrait
 end
 
-# class MiClase3
-  # include MiTrait
-  # include MiOtroTrait
-    # uses MiTrait + MiOtroTrait
-# end
+class MiClase3
+    uses MiTrait + MiOtroTrait
+end
 
 # class MiClaseConConflictos
   # include MiTrait
