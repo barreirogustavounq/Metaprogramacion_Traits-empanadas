@@ -1,24 +1,23 @@
 require 'trait'
 
-class Klass
-  def uses (unTrait)
-    # if unTrait.instance_methods().respond_to?("each")
-    unTrait.instance_methods().each do | name |
-      # def create_method(name, &block)
-        self.class.send(:define_method, name, unTrait.instance_method(name))
-      # end
+class Module
+  def uses(trait)
+    trait.instance_methods.each do | name |
+      self.send(:define_method, name) do | *args, &block |
+        trait.instance_method(name).bind(self).call(*args, &block)
+      end
     end
   end
 end
 
-class MiClase < Klass
-  def initialize
-    uses MiTrait
-  end
+class MiClase
+  uses MiTrait
 
   def metodo2(sufijo)
     "mundo" + sufijo
   end
+
+  # method_missing(name, *args, &block)
 end
 
 # class MiClase2
