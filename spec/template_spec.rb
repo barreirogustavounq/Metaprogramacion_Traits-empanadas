@@ -14,16 +14,16 @@ end
 
 describe 'traits tests' do
 
-  # it 'Testea el metodo de un trait incluido en una clase' do
-    # una_clase = MiClase.new
-    # expect(una_clase.metodo1).to eq("hola")
-    # expect(una_clase.metodo2('!')).to eq("mundo!")
-  # end
+  it 'Testea el metodo de un trait incluido en una clase' do
+    una_clase = MiClase.new
+    expect(una_clase.metodo1).to eq("hola")
+    expect(una_clase.metodo2('!')).to eq("mundo!")
+  end
 
-  # it 'Testea el metodo de una clase con mismo nonmbre al de el trait incluido y gana la implementación de la clase' do
-    # segunda_clase = MiClase2.new
-    # expect(segunda_clase.metodo1).to eq("chau")
-  # end
+  it 'Testea el metodo de una clase con mismo nonmbre al de el trait incluido y gana la implementación de la clase' do
+    segunda_clase = MiClase2.new
+    expect(segunda_clase.metodo1).to eq("chau")
+  end
 
   # it 'Testea metodos diferentes de dos traits incluidos en una clase' do
     # tercer_clase = MiClase3.new
@@ -47,10 +47,4 @@ describe 'traits tests' do
     # con_alias = ConAlias.new
     # expect(con_alias.metodo1).to eq("hola y chau")
   # end
-
-  it 'Test de uses' do
-    mi_clase = MiClase.new
-    expect(mi_clase.metodo1).to eq("hola")
-    expect(mi_clase.metodo2("!")).to eq("mundo!")
-  end
 end

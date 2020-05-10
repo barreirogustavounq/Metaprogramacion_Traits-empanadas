@@ -3,8 +3,10 @@ require 'trait'
 class Module
   def uses(trait)
     trait.instance_methods.each do | name |
-      self.send(:define_method, name) do | *args, &block |
-        trait.instance_method(name).bind(self).call(*args, &block)
+      unless self.method_defined? name
+        self.send(:define_method, name) do | *args, &block |
+          trait.instance_method(name).bind(self).call(*args, &block)
+        end
       end
     end
   end
@@ -20,13 +22,13 @@ class MiClase
   # method_missing(name, *args, &block)
 end
 
-# class MiClase2
-#   def metodo1
-#     "chau"
-#   end
+class MiClase2
+  def metodo1
+    "chau"
+  end
 
-  # include MiTrait
-# end
+  uses MiTrait
+end
 
 # class MiClase3
   # include MiTrait
