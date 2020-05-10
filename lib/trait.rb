@@ -4,6 +4,10 @@ def trait (nombre, &block)
 end
 
 trait :MiTrait do
+  # @metodo1 = Proc.new do
+  #   "hola"
+  # end
+
   def metodo1
     "hola"
   end
