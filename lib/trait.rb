@@ -12,26 +12,25 @@ class Trait < Module
   end
 
   public
-  def - (method)
-    method_string = method.to_s
-    trait_Methods = self.instance_methods
-    if trait_Methods.include? method_string
-      self.send(:remove_method, method_string, self.instance_method(method_string))
-    end
-    self
-  end
-
-  public
   def + (otroTrait)
-    nuevoTrait = Trait.new()
-    self.instance_methods.each do | method |
-      nuevoTrait.send(:define_method, method, self.instance_method(method))
-    end
+    nuevoTrait = self.clone
 
     otroTrait.instance_methods.each do | method |
       unless nuevoTrait.method_defined? method
         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
       end
+    end
+    nuevoTrait
+  end
+
+  public
+  def - (method)
+    method_string = method.to_s
+    nuevoTrait = self.clone
+    trait_Methods = nuevoTrait.instance_methods
+
+    if trait_Methods.include? method_string
+      nuevoTrait.send(:remove_method, method_string, nuevoTrait.instance_method(method_string))
     end
     nuevoTrait
   end

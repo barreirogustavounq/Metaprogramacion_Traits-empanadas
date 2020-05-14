@@ -44,7 +44,7 @@ describe 'traits tests' do
   end
 
   # it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
-    # con_alias = ConAlias.new
-    # expect(con_alias.metodo1).to eq("hola y chau")
+  #   con_alias = ConAlias.new
+  #   expect(con_alias.metodo1).to eq("hola y chau")
   # end
 end
