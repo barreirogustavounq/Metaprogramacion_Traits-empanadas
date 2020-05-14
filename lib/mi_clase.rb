@@ -43,9 +43,12 @@ end
 
 #esta clase se crea solo para probar que se borran los metodos de las clases
 class BorraTodoLosMetodos
-  uses SoloDiceChau - :metodo1 -:metodo2
+  uses SoloDiceChau - :metodo1 - :metodo2
 end
 
+class BorraTodoLosMetodosSinLista
+  uses SoloDiceChau - [:metodo1, :metodo2]
+end
 # class ConAlias
 #   include MiTrait
 #   alias_method :metodo1_MiTrait, :metodo1

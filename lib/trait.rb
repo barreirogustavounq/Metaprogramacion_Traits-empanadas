@@ -24,15 +24,21 @@ class Trait < Module
   end
 
   public
-  def - (method)
-    method_string = method.to_s
+  def - (element)
     nuevoTrait = self.clone
     trait_Methods = nuevoTrait.instance_methods
-
-    if trait_Methods.include? method
-      nuevoTrait.remove_method(method)
+    if element.class == Array
+      element.each do |mtd|
+        if trait_Methods.include? mtd
+          nuevoTrait.remove_method(mtd)
+        end
+      end
+    else
+      if trait_Methods.include? element
+        nuevoTrait.remove_method(element)
+      end
     end
-    nuevoTrait
+      nuevoTrait
   end
 end
 

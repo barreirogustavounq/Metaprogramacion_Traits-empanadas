@@ -42,11 +42,15 @@ describe 'traits tests' do
     expect(mi_clase_con_conflictos.metodo2).to eq("chau")
   end
 
-  it 'Testeo que borre mas de un metodo' do
-    todo_bien_todo_legal = BorraTodoLosMetodos.new
-    expect { todo_bien_todo_legal.metodo1 }.to raise_error(NoMethodError)
-    expect { todo_bien_todo_legal.metodo2 }.to raise_error(NoMethodError)
-    #expect(todo_bien_todo_legal.metodo2).to eq("chau")
+  it 'Testeo que borre mas de un metodo con la siguiente forma uses trait - [m1,m2,..etc]' do
+    borraMetodosenlista = BorraTodoLosMetodos.new
+    expect { borraMetodosenlista.metodo1 }.to raise_error(NoMethodError)
+    expect { borraMetodosenlista.metodo2 }.to raise_error(NoMethodError)
+  end
+  it 'Testeo que borre mas de un metodo con la siguiente forma uses trait - :m1 -:m2..etc' do
+    borraMetodosSinLista = BorraTodoLosMetodosSinLista.new
+    expect { borraMetodosSinLista.metodo1 }.to raise_error(NoMethodError)
+    expect { borraMetodosSinLista.metodo2 }.to raise_error(NoMethodError)
   end
 
   # it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
