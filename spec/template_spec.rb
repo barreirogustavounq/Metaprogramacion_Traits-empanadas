@@ -36,11 +36,17 @@ describe 'traits tests' do
     expect(mi_clase_con_conflictos.metodo1).to eq("hola")
     expect(mi_clase_con_conflictos.metodo2).to eq("chau")
   end
+  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
+    mi_clase_con_conflictos = MiClaseConConflictos.new
+    expect(mi_clase_con_conflictos.metodo1).to eq("hola")
+    expect(mi_clase_con_conflictos.metodo2).to eq("chau")
+  end
 
-  it 'Testeo metodos iguales de dos traits diferentes incluidos en una clase. Pero sacando el metodo de un trait' do
-    todo_bien_todo_legal = TodoBienTodoLegal.new
-    expect(todo_bien_todo_legal.metodo1).to eq("hola")
-    expect(todo_bien_todo_legal.metodo2).to eq("chau")
+  it 'Testeo que borre mas de un metodo' do
+    todo_bien_todo_legal = BorraTodoLosMetodos.new
+    expect { todo_bien_todo_legal.metodo1 }.to raise_error(NoMethodError)
+    expect { todo_bien_todo_legal.metodo2 }.to raise_error(NoMethodError)
+    #expect(todo_bien_todo_legal.metodo2).to eq("chau")
   end
 
   # it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do

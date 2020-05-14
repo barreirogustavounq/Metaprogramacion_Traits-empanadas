@@ -41,6 +41,11 @@ class TodoBienTodoLegal
   uses MiTrait + (SoloDiceChau - :metodo1)
 end
 
+#esta clase se crea solo para probar que se borran los metodos de las clases
+class BorraTodoLosMetodos
+  uses SoloDiceChau - :metodo1 -:metodo2
+end
+
 # class ConAlias
 #   include MiTrait
 #   alias_method :metodo1_MiTrait, :metodo1

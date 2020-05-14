@@ -29,8 +29,8 @@ class Trait < Module
     nuevoTrait = self.clone
     trait_Methods = nuevoTrait.instance_methods
 
-    if trait_Methods.include? method_string
-      nuevoTrait.send(:remove_method, method_string, nuevoTrait.instance_method(method_string))
+    if trait_Methods.include? method
+      nuevoTrait.remove_method(method)
     end
     nuevoTrait
   end
