@@ -40,6 +40,15 @@ class Trait < Module
     end
       nuevoTrait
   end
+
+  public
+  def << (hash)
+    nuevoTrait = self.clone
+    old_name = hash.keys[0]
+    new_name = hash[old_name]
+    nuevoTrait.alias_method new_name, old_name
+    nuevoTrait
+  end
 end
 
 def trait (nombre, &block)

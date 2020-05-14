@@ -53,8 +53,8 @@ describe 'traits tests' do
     expect { borraMetodosSinLista.metodo2 }.to raise_error(NoMethodError)
   end
 
-  # it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
-  #   con_alias = ConAlias.new
-  #   expect(con_alias.metodo1).to eq("hola y chau")
-  # end
+  it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
+    con_alias = ConAlias.new
+    expect(con_alias.metodo1).to eq("hola y chau")
+  end
 end

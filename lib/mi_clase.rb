@@ -43,25 +43,18 @@ end
 
 #esta clase se crea solo para probar que se borran los metodos de las clases
 class BorraTodoLosMetodos
-  uses SoloDiceChau - :metodo1 - :metodo2
+  uses SoloDiceChau - [:metodo1, :metodo2]
 end
 
 class BorraTodoLosMetodosSinLista
-  uses SoloDiceChau - [:metodo1, :metodo2]
+  uses SoloDiceChau - :metodo1 - :metodo2
 end
-# class ConAlias
-#   include MiTrait
-#   alias_method :metodo1_MiTrait, :metodo1
-#
-#   include SoloDiceChau
-#   alias_method :metodo1_SoloDiceChau, :metodo1
-#   uses
-  # (MiTrait << {metodo1: :m1Hola} - :metodo1) +
-  #   (SoloDiceChau << {metodo1: :m1Chau} - :metodo1)
-  #
-  # def metodo1
-  #   m1Hola + " y " + m1Chau
-    # metodo1_MiTrait + " y " + metodo1_SoloDiceChau
-  # end
-# end
-#
+
+class ConAlias
+  uses ((MiTrait << {metodo1: :m1Hola}) - :metodo1) +
+      ((SoloDiceChau << {metodo1: :m1Chau}) - :metodo1)
+
+  def metodo1
+    m1Hola + " y " + m1Chau
+  end
+end
