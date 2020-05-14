@@ -1,25 +1,48 @@
-def trait (nombre, &block)
-  el_trait = Module.new(&block)
-  Object.const_set(nombre, el_trait)
-end
+class Trait < Module
+  def initialize(&block)
+    super(&block)
+  end
 
-public
-def + (trait)
-  trait.instance_methods.each do | name |
-    unless self.method_defined? name
-      self.send(:define_method, name) do | *args, &block |
-        trait.instance_method(name).bind(self).call(*args, &block)
+  def includeIn(klass)
+    self.instance_methods.each do | method |
+      unless klass.method_defined? method
+        klass.send(:define_method, method, self.instance_method(method))
       end
     end
   end
-  self
+
+  public
+  def - (method)
+    method_string = method.to_s
+    trait_Methods = self.instance_methods
+    if trait_Methods.include? method_string
+      self.send(:remove_method, method_string, self.instance_method(method_string))
+    end
+    self
+  end
+
+  public
+  def + (otroTrait)
+    nuevoTrait = Trait.new()
+    self.instance_methods.each do | method |
+      nuevoTrait.send(:define_method, method, self.instance_method(method))
+    end
+
+    otroTrait.instance_methods.each do | method |
+      unless nuevoTrait.method_defined? method
+        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+      end
+    end
+    nuevoTrait
+  end
+end
+
+def trait (nombre, &block)
+  el_trait = Trait.new(&block)
+  Object.const_set(nombre, el_trait)
 end
 
 trait :MiTrait do
-  # @metodo1 = Proc.new do
-  #   "hola"
-  # end
-
   def metodo1
     "hola"
   end

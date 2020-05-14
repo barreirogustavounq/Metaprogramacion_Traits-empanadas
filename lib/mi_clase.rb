@@ -2,13 +2,7 @@ require 'trait'
 
 class Module
   def uses(trait)
-    trait.instance_methods.each do | name |
-      unless self.method_defined? name
-        self.send(:define_method, name) do | *args, &block |
-          trait.instance_method(name).bind(self).call(*args, &block)
-        end
-      end
-    end
+    trait.includeIn(self)
   end
 end
 
@@ -34,54 +28,19 @@ class MiClase3
     uses MiTrait + MiOtroTrait
 end
 
-# class MiClaseConConflictos
-  # include MiTrait
-  # include SoloDiceChau
-  # uses MiTrait + SoloDiceChau  # Debería lanzar una excepción
-# end
+# Por ahora se eligio la resolución de conflictos definida en el primer item de Estrategias de resolución del enunciado.
+class MiClaseConConflictos
+  uses MiTrait + SoloDiceChau  # Debería lanzar una excepción
+end
 
-# class MiClaseSinConflictos
-  # include MiTrait
-  # include MiTrait
-  # uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
-# end
+class MiClaseSinConflictos
+  uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
+end
 
-# class TodoBienTodoLegal
-  # include MiTrait
-  # alias_method :metodo1_MiTrait, :metodo1
+class TodoBienTodoLegal
+  uses MiTrait + (SoloDiceChau - :metodo1)
+end
 
-  # include SoloDiceChau
-  # alias_method :metodo1_SoloDiceChau, :metodo1
-
-  # def metodo1
-  #   if MiTrait.method_defined? __callee__
-  #     metodo1_MiTrait
-  #   elsif SoloDiceChau.method_defined? __callee__
-  #     metodo1_SoloDiceChau
-  #   end
-  # end
-  #
-  # def metodo2
-  #   if MiTrait.method_defined? __callee__
-  #     metodo1_MiTrait
-  #   elsif SoloDiceChau.method_defined? __callee__
-  #     metodo1_SoloDiceChau
-  #   end
-  # end
-
-  # TODO: Corregir para refactorizar
-  # def obtenerMetodoConConflictoEntreDosTraits
-  #   res = ""
-  #   if MiTrait.method_defined? __callee__
-  #     res =  metodo1_MiTrait
-  #   elsif SoloDiceChau.method_defined? __callee__
-  #     res = metodo1_SoloDiceChau
-  #   end
-  #   return res
-  # end
-  # uses MiTrait + (SoloDiceChau - :metodo1)
-# end
-#
 # class ConAlias
 #   include MiTrait
 #   alias_method :metodo1_MiTrait, :metodo1
