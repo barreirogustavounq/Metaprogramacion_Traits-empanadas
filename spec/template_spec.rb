@@ -33,13 +33,12 @@ describe 'traits tests' do
 
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
     mi_clase_con_conflictos = MiClaseConConflictos.new
-    expect(mi_clase_con_conflictos.metodo1).to eq("hola")
+    expect { mi_clase_con_conflictos.metodo1 }.to raise_error(NoMethodError)
     expect(mi_clase_con_conflictos.metodo2).to eq("chau")
   end
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
-    mi_clase_con_conflictos = MiClaseConConflictos.new
-    expect(mi_clase_con_conflictos.metodo1).to eq("hola")
-    expect(mi_clase_con_conflictos.metodo2).to eq("chau")
+    mi_clase_sin_conflictos = MiClaseSinConflictos.new
+    expect(mi_clase_sin_conflictos.metodo1).to eq("hola")
   end
 
   it 'Testeo que borre mas de un metodo con la siguiente forma uses trait - [m1,m2,..etc]' do

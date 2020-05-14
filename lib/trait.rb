@@ -16,7 +16,12 @@ class Trait < Module
     nuevoTrait = self.clone
 
     otroTrait.instance_methods.each do | method |
-      unless nuevoTrait.method_defined? method
+      if nuevoTrait.method_defined? method
+        if self != otroTrait
+
+          nuevoTrait.remove_method(method)
+        end
+      else
         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
       end
     end
