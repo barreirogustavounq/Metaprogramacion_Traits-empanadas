@@ -18,7 +18,6 @@ class Trait < Module
     otroTrait.instance_methods.each do | method |
       if nuevoTrait.method_defined? method
         if self != otroTrait
-
           nuevoTrait.remove_method(method)
         end
       else

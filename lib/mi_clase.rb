@@ -28,7 +28,6 @@ class MiClase3
     uses MiTrait + MiOtroTrait
 end
 
-# Por ahora se eligio la resolución de conflictos definida en el primer item de Estrategias de resolución del enunciado.
 class MiClaseConConflictos
   uses MiTrait + SoloDiceChau  # Debería lanzar una excepción
 end
@@ -50,6 +49,8 @@ class BorraTodoLosMetodosSinLista
   uses SoloDiceChau - :metodo1 - :metodo2
 end
 
+# Para poder resolverlo se tuvo q agregar un parentesis de más para separar la funcionalidad de Alias '<<' con la de remover '-'.
+# Porque si no al ejecutarlo daba error de que la Clase Hash no conoce al metodo '-'.
 class ConAlias
   uses ((MiTrait << {metodo1: :m1Hola}) - :metodo1) +
       ((SoloDiceChau << {metodo1: :m1Chau}) - :metodo1)

@@ -1,16 +1,5 @@
 require 'rspec'
-require 'template'
 require 'mi_clase'
-
-describe 'template tests' do
-
-  it 'un template saluda con "Hola!"' do
-    un_template = Template.new
-
-    expect(un_template.saludar).to eq("Hola!")
-  end
-
-end
 
 describe 'traits tests' do
 
