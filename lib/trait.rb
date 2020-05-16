@@ -11,7 +11,7 @@ class Trait < Module
     end
   end
 
-  #estrategia 2
+#estrategia 2
 #  public
 #  def + (otroTrait)
 #    nuevoTrait = self.clone
@@ -31,6 +31,20 @@ class Trait < Module
 #    nuevoTrait
 #  end
 #
+
+#  #estrategia 1
+#  public
+#  def + (otroTrait)
+#    nuevoTrait = self.clone
+#
+#    otroTrait.instance_methods.each do | method |
+#      unless nuevoTrait.method_defined? method
+#        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
+#      end
+#    end
+#    nuevoTrait
+#  end
+
 
   public
   def + (otroTrait)
