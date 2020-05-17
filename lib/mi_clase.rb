@@ -59,3 +59,11 @@ class ConAlias
     m1Hola + " y " + m1Chau
   end
 end
+
+class MiClaseConConflictosResueltosConPrimeraEstretegia
+  uses MiTrait.+ SoloDiceChau, 1
+end
+
+class MiClaseConConflictosResueltosConSegundaEstretegia
+  uses MiTrait.+ SoloDiceChau, 2
+end

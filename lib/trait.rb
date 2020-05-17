@@ -1,4 +1,5 @@
 class Trait < Module
+
   def initialize(&block)
     super(&block)
   end
@@ -11,45 +12,40 @@ class Trait < Module
     end
   end
 
-#estrategia 2
-#  public
-#  def + (otroTrait)
-#    nuevoTrait = self.clone
-#
-#    otroTrait.instance_methods.each do | method |
-#      if nuevoTrait.method_defined? method
-#        if self != otroTrait
-#          metodos = []
-#          metodos.push(method)
-#          metodos.push(otroTrait.instance_method(method))
-#          nuevoTrait.send(:define_method, method, metodos.last)
-#        end
-#      else
-#        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
-#      end
-#    end
-#    nuevoTrait
-#  end
-#
+ public
+ def primeraEstrategiaResolucionDeConflictos(otroTrait)
+   nuevoTrait = self.clone
 
-#  #estrategia 1
-#  public
-#  def + (otroTrait)
-#    nuevoTrait = self.clone
-#
-#    otroTrait.instance_methods.each do | method |
-#      unless nuevoTrait.method_defined? method
-#        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
-#      end
-#    end
-#    nuevoTrait
-#  end
+   otroTrait.instance_methods.each do | method |
+     unless nuevoTrait.method_defined? method
+       nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
+     end
+   end
+   nuevoTrait
+ end
 
 
-  public
-  def + (otroTrait)
+ public
+ def segundaEstrategiaResolucionDeConflictos(otroTrait)
+   nuevoTrait = self.clone
+
+   otroTrait.instance_methods.each do | method |
+     if nuevoTrait.method_defined? method
+       if self != otroTrait
+         metodos = []
+         metodos.push(method)
+         metodos.push(otroTrait.instance_method(method))
+         nuevoTrait.send(:define_method, method, metodos.last)
+       end
+     else
+       nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
+     end
+   end
+   nuevoTrait
+ end
+
+  def resolucionConConflictos(otroTrait)
     nuevoTrait = self.clone
-
     otroTrait.instance_methods.each do | method |
       if nuevoTrait.method_defined? method
         if self != otroTrait
@@ -60,6 +56,19 @@ class Trait < Module
       end
     end
     nuevoTrait
+  end
+
+  public
+  def + (otroTrait, estrategia = nil)
+    case estrategia
+    when 1
+      primeraEstrategiaResolucionDeConflictos(otroTrait)
+    when 2
+      segundaEstrategiaResolucionDeConflictos(otroTrait)
+    else
+      resolucionConConflictos(otroTrait)
+    end
+
   end
 
   public
