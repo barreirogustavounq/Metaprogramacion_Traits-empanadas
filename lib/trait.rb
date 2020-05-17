@@ -73,9 +73,9 @@ class Trait < Module
               nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
             end
           end
-        else
-          nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
         end
+      else
+        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
       end
     end
     nuevoTrait

@@ -192,7 +192,7 @@ describe 'traits tests' do
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
-    expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(NoMethodError)
+    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
   end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
