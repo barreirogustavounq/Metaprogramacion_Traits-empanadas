@@ -27,10 +27,8 @@ class Trait < Module
    otroTrait.instance_methods.each do | method |
      if nuevoTrait.method_defined? method
        if self != otroTrait
-         metodos = []
-         metodos.push(method)
-         metodos.push(otroTrait.instance_method(method))
-         nuevoTrait.send(:define_method, method, metodos.last)
+         nuevoTrait.instance_method(method).bind(self).call
+         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
        end
      else
        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
@@ -71,7 +69,7 @@ class Trait < Module
             nuevoTrait.send(:define_method, method, nuevoTrait.instance_method(method))
           else
             if metodoOtroTrait == condicion
-            nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+              nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
             else
               nuevoTrait.remove_method(method)
             end

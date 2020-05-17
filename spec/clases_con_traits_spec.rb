@@ -9,6 +9,12 @@ describe 'traits tests' do
     end
   end
 
+  OtroTrait = trait do
+    def metodo1
+      "hello"
+    end
+  end
+
   MiOtroTrait = trait do
     def metodo2
       "mundo"
@@ -84,11 +90,11 @@ describe 'traits tests' do
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 2' do
    MiClaseConConflictosResueltosConSegundaEstretegia = clase do
-     uses MiTrait.+ SoloDiceChau, 2
+     uses (MiTrait.+ SoloDiceChau, 2).+ OtroTrait, 2
    end
 
    mi_clase_con_conflictos_estrategia_2 = MiClaseConConflictosResueltosConSegundaEstretegia.new
-   expect(mi_clase_con_conflictos_estrategia_2.metodo1).to eq("chau")
+   expect(mi_clase_con_conflictos_estrategia_2.metodo1).to eq("hello")
    expect(mi_clase_con_conflictos_estrategia_2.metodo2).to eq("chau")
  end
  
