@@ -184,6 +184,16 @@ describe 'traits tests' do
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
  end
+  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+    'En este caso se suman 2 con diferentes estrategias'
+    compararPorIgualdad = proc { |a,b| a == b}
+    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
+      uses (MiTrait.+ SoloDiceChau).+ Rompe, 4, nil, "rompe", compararPorIgualdad
+    end
+
+    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
+    expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(NoMethodError)
+  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
     'En este caso al no encontrar el metodo rompe'
