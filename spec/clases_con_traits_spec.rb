@@ -118,6 +118,36 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_longitud_de_max.metodo2).to eq("chau")
  end
 
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+   'En este caso toma el Trait de MiTrait'
+   MiClaseConConflictosResueltosConCuartaEstretegia = clase do
+     uses MiTrait.+ SoloDiceChau, 4, nil, "hola"
+   end
+
+   mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegia.new
+   expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("hola")
+ end
+
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+   'En este caso toma el Trait de SoloDiceChau'
+   MiClaseConConflictosResueltosConCuartaEstretegia = clase do
+     uses MiTrait.+ SoloDiceChau, 4, nil, "chau"
+   end
+
+   mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegia.new
+   expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("chau")
+ end
+
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+   'En este caso al no encontrar el metodo rompe'
+   MiClaseConConflictosResueltosConCuartaEstretegia = clase do
+     uses MiTrait.+ SoloDiceChau, 4, nil, "rompe"
+   end
+
+   mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegia.new
+   expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(NoMethodError)
+ end
+
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
    MiClaseSinConflictos = clase do
      uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
