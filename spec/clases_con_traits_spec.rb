@@ -25,6 +25,12 @@ describe 'traits tests' do
     end
   end
 
+  Rompe = trait do
+    def metodo1
+      "rompe"
+    end
+  end
+
  it 'Testea el metodo de un trait incluido en una clase' do
    MiClase = clase do
      uses MiTrait
@@ -161,13 +167,23 @@ describe 'traits tests' do
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
-   'En este caso al no encontrar el metodo rompe'
+   'En este caso se suman 2 traits'
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
-     uses MiTrait.+ SoloDiceChau, 4, nil, "rompe"
+     uses (MiTrait.+ SoloDiceChau, 4, nil, "hola").+ Rompe, 4, nil, "rompe"
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
-   expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(NoMethodError)
+   expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
+ end
+
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+    'En este caso al no encontrar el metodo rompe'
+    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
+      uses (MiTrait.+ SoloDiceChau, 4, nil, "rompe")
+    end
+
+    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
+    expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(StandardError)
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
