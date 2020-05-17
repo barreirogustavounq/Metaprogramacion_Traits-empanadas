@@ -71,7 +71,7 @@ class Trait < Module
             nuevoTrait.send(:define_method, method, nuevoTrait.instance_method(method))
           else
             if metodoOtroTrait == condicion
-              nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+            nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
             else
               nuevoTrait.remove_method(method)
             end
