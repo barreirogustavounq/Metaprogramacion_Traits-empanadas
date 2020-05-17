@@ -57,18 +57,17 @@ class Trait < Module
     nuevoTrait
   end
 
-  def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, condicion)
+  def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, condicion, &comparador)
     nuevoTrait = self.clone
-
     otroTrait.instance_methods.each do | method |
       if nuevoTrait.method_defined? method
         if self != otroTrait
           metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
           metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-          if metodoNuevoTrait == condicion
+          if [metodoNuevoTrait, condicion].inject &comparador
             nuevoTrait.send(:define_method, method, nuevoTrait.instance_method(method))
           else
-            if metodoOtroTrait == condicion
+            if [metodoOtroTrait, condicion].inject &comparador
               nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
             else
               nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
@@ -97,7 +96,7 @@ class Trait < Module
   end
 
   public
-  def + (otroTrait, estrategia = nil, funcion = nil, condicion = nil)
+  def + (otroTrait, estrategia = nil, funcion = nil, condicion = nil, comparador = nil)
     case estrategia
     when 1
       primeraEstrategiaResolucionDeConflictos(otroTrait)
@@ -106,7 +105,7 @@ class Trait < Module
     when 3
       terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     when 4
-      cuartaEstrategiaDeResolucionDeConflictos(otroTrait, condicion)
+      cuartaEstrategiaDeResolucionDeConflictos(otroTrait, condicion, &comparador)
     else
       resolucionConConflictos(otroTrait)
     end
