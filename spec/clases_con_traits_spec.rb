@@ -187,22 +187,22 @@ describe 'traits tests' do
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
     'En este caso se suman 2 con diferentes estrategias'
     compararPorIgualdad = proc { |a,b| a == b}
-    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
+    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias = clase do
       uses (MiTrait.+ SoloDiceChau).+ Rompe, 4, nil, "rompe", compararPorIgualdad
     end
 
-    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
+    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias.new
     expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
   end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
     'En este caso al no encontrar el metodo rompe'
     compararPorIgualdad = proc { |a,b| a == b}
-    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
+    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError = clase do
       uses MiTrait.+ SoloDiceChau, 4, nil, "rompe", compararPorIgualdad
     end
 
-    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
+    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError.new
     expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(StandardError)
  end
 
