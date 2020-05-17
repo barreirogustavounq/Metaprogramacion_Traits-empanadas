@@ -12,8 +12,8 @@ class Trait < Module
     end
   end
 
- public
- def primeraEstrategiaResolucionDeConflictos(otroTrait)
+  public
+  def primeraEstrategiaResolucionDeConflictos(otroTrait)
    nuevoTrait = self.clone
 
    otroTrait.instance_methods.each do | method |
@@ -22,11 +22,10 @@ class Trait < Module
      end
    end
    nuevoTrait
- end
+  end
 
-
- public
- def segundaEstrategiaResolucionDeConflictos(otroTrait)
+  public
+  def segundaEstrategiaResolucionDeConflictos(otroTrait)
    nuevoTrait = self.clone
 
    otroTrait.instance_methods.each do | method |
@@ -42,7 +41,27 @@ class Trait < Module
      end
    end
    nuevoTrait
- end
+  end
+
+  public
+  def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
+    nuevoTrait = self.clone
+
+    otroTrait.instance_methods.each do | method |
+      if nuevoTrait.method_defined? method
+        if self != otroTrait
+          metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
+          metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
+          fold = [metodoNuevoTrait, metodoOtroTrait].inject &funcion
+          methodFold = proc {fold}
+          nuevoTrait.send(:define_method, method, methodFold)
+        end
+      else
+        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+      end
+    end
+    nuevoTrait
+  end
 
   def resolucionConConflictos(otroTrait)
     nuevoTrait = self.clone
@@ -59,34 +78,35 @@ class Trait < Module
   end
 
   public
-  def + (otroTrait, estrategia = nil)
+  def + (otroTrait, estrategia = nil, funcion = nil)
     case estrategia
     when 1
       primeraEstrategiaResolucionDeConflictos(otroTrait)
     when 2
       segundaEstrategiaResolucionDeConflictos(otroTrait)
+    when 3
+      terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     else
       resolucionConConflictos(otroTrait)
     end
-
   end
 
   public
   def - (element)
-    nuevoTrait = self.clone
-    trait_Methods = nuevoTrait.instance_methods
-    if element.class == Array
-      element.each do |mtd|
-        if trait_Methods.include? mtd
-          nuevoTrait.remove_method(mtd)
-        end
-      end
-    else
-      if trait_Methods.include? element
-        nuevoTrait.remove_method(element)
+  nuevoTrait = self.clone
+  trait_Methods = nuevoTrait.instance_methods
+  if element.class == Array
+    element.each do |mtd|
+      if trait_Methods.include? mtd
+        nuevoTrait.remove_method(mtd)
       end
     end
-      nuevoTrait
+  else
+    if trait_Methods.include? element
+      nuevoTrait.remove_method(element)
+    end
+  end
+    nuevoTrait
   end
 
   public

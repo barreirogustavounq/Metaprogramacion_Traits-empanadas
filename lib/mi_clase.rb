@@ -67,3 +67,11 @@ end
 class MiClaseConConflictosResueltosConSegundaEstretegia
   uses MiTrait.+ SoloDiceChau, 2
 end
+
+class MiClaseConConflictosResueltosConTercerEstrategia
+  uses MiTrait.+ SoloDiceChau, 3, proc { |a, b| a + b }
+end
+
+class MiClaseConConflictosResueltosConTercerEstrategiaUpcase
+  uses MiTrait.+ SoloDiceChau, 3, proc { |a, b| a.upcase + b.upcase }
+end
