@@ -50,6 +50,18 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_suma_upcase.metodo2).to eq("chau")
  end
 
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Max' do
+   mi_clase_con_conflictos_estrategia_3_max = MiClaseConConflictosResueltosConTercerEstrategiaMax.new
+   expect(mi_clase_con_conflictos_estrategia_3_max.metodo1).to eq("chau")
+   expect(mi_clase_con_conflictos_estrategia_3_max.metodo2).to eq("chau")
+ end
+
+ it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Longitud de Max' do
+   mi_clase_con_conflictos_estrategia_3_longitud_de_max = MiClaseConConflictosResueltosConTercerEstrategiaLongitudDeMax.new
+   expect(mi_clase_con_conflictos_estrategia_3_longitud_de_max.metodo1).to be 4
+   expect(mi_clase_con_conflictos_estrategia_3_longitud_de_max.metodo2).to eq("chau")
+ end
+
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
    mi_clase_sin_conflictos = MiClaseSinConflictos.new
    expect(mi_clase_sin_conflictos.metodo1).to eq("hola")

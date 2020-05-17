@@ -75,3 +75,13 @@ end
 class MiClaseConConflictosResueltosConTercerEstrategiaUpcase
   uses MiTrait.+ SoloDiceChau, 3, proc { |a, b| a.upcase + b.upcase }
 end
+
+class MiClaseConConflictosResueltosConTercerEstrategiaMax
+  uses MiTrait.+ SoloDiceChau, 3, proc { |a,b|
+    a.length > b.length ? a : b }
+end
+
+class MiClaseConConflictosResueltosConTercerEstrategiaLongitudDeMax
+  uses MiTrait.+ SoloDiceChau, 3, proc { |a,b|
+    a.length >= b.length ? a.length : b.length }
+end
