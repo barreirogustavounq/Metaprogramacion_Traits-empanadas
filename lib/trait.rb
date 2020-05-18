@@ -111,15 +111,12 @@ class Trait < Module
   def - (element)
     nuevoTrait = self.clone
     trait_Methods = nuevoTrait.instance_methods
-    if element.class == Array
-      element.each do |mtd|
-        if trait_Methods.include? mtd
-          nuevoTrait.remove_method(mtd)
-        end
-      end
-    else
-      if trait_Methods.include? element
-        nuevoTrait.remove_method(element)
+    unless element.respond_to? 'each'
+      element = [element]
+    end
+    element.each do |mtd|
+      if trait_Methods.include? mtd
+        nuevoTrait.remove_method(mtd)
       end
     end
     nuevoTrait
