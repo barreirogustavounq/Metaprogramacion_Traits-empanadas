@@ -31,8 +31,11 @@ class Trait < Module
   def segundaEstrategiaResolucionDeConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
       if self != otroTrait
-        nuevoTrait.instance_method(method).bind(self).call
-        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+        metodosSegundaResolucion = proc do
+          nuevoTrait.instance_method(method).bind(self).call
+          otroTrait.instance_method(method)
+        end
+        nuevoTrait.send(:define_method, method, metodosSegundaResolucion.call)
       end
     end
 
@@ -42,10 +45,10 @@ class Trait < Module
   public
   def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      if self != otroTrait
-        metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
-        metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-        fold = [metodoNuevoTrait, metodoOtroTrait].inject &funcion
+      metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
+      metodoOtroTrait = otroTrait.instance_method(method).bind(self)
+      if metodoNuevoTrait != metodoOtroTrait
+        fold = [metodoNuevoTrait.call, metodoOtroTrait.call].inject &funcion
         methodFold = proc {fold}
         nuevoTrait.send(:define_method, method, methodFold)
       end
@@ -57,9 +60,9 @@ class Trait < Module
   def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
     resolucionDeConflictos = proc do | method, nuevoTrait |
       if self != otroTrait
-        metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
-        metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-        metodoQueCoincide = [metodoNuevoTrait, metodoOtroTrait].find &comparador
+        metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
+        metodoOtroTrait = otroTrait.instance_method(method).bind(self)
+        metodoQueCoincide = [metodoNuevoTrait.call, metodoOtroTrait.call].find &comparador
         if metodoQueCoincide
           bloque = proc {metodoQueCoincide}
           nuevoTrait.send(:define_method, method, bloque)
@@ -100,10 +103,7 @@ class Trait < Module
   def - (element)
     nuevoTrait = self.clone
     trait_Methods = nuevoTrait.instance_methods
-    unless element.respond_to? 'each'
-      element = [element]
-    end
-    element.each do |mtd|
+    [*element].each do |mtd|
       if trait_Methods.include? mtd
         nuevoTrait.remove_method(mtd)
       end
