@@ -64,10 +64,10 @@ class Trait < Module
         if self != otroTrait
           metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
           metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-          fold = [metodoNuevoTrait, metodoOtroTrait].find &comparador
-          if fold
-            methodFold = proc {fold}
-            nuevoTrait.send(:define_method, method, methodFold)
+          metodoQueCoincide = [metodoNuevoTrait, metodoOtroTrait].find &comparador
+          if metodoQueCoincide
+            bloque = proc {metodoQueCoincide}
+            nuevoTrait.send(:define_method, method, bloque)
           else
             nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
           end
@@ -83,9 +83,7 @@ class Trait < Module
     nuevoTrait = self.clone
     otroTrait.instance_methods.each do | method |
       if nuevoTrait.method_defined? method
-        if self != otroTrait
-          nuevoTrait.remove_method(method)
-        end
+        nuevoTrait.remove_method(method) if self != otroTrait
       else
         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
       end
@@ -111,19 +109,19 @@ class Trait < Module
 
   public
   def - (element)
-  nuevoTrait = self.clone
-  trait_Methods = nuevoTrait.instance_methods
-  if element.class == Array
-    element.each do |mtd|
-      if trait_Methods.include? mtd
-        nuevoTrait.remove_method(mtd)
+    nuevoTrait = self.clone
+    trait_Methods = nuevoTrait.instance_methods
+    if element.class == Array
+      element.each do |mtd|
+        if trait_Methods.include? mtd
+          nuevoTrait.remove_method(mtd)
+        end
+      end
+    else
+      if trait_Methods.include? element
+        nuevoTrait.remove_method(element)
       end
     end
-  else
-    if trait_Methods.include? element
-      nuevoTrait.remove_method(element)
-    end
-  end
     nuevoTrait
   end
 
