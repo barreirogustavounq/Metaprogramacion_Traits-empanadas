@@ -8,87 +8,76 @@ class Trait < Module
     end
   end
 
+  def definirMetodo(otroTrait, &resolucionDeConflictos)
+    nuevoTrait = self.clone
+
+    otroTrait.instance_methods.each do | method |
+      unless nuevoTrait.method_defined? method
+        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
+      else
+        resolucionDeConflictos.(method, nuevoTrait)
+      end
+    end
+    nuevoTrait
+  end
+
   public
   def primeraEstrategiaResolucionDeConflictos(otroTrait)
-   nuevoTrait = self.clone
-
-   otroTrait.instance_methods.each do | method |
-     unless nuevoTrait.method_defined? method
-       nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
-     end
-   end
-   nuevoTrait
+    resolucionDeConflictos = proc {}
+    definirMetodo(otroTrait, &resolucionDeConflictos)
   end
 
   public
   def segundaEstrategiaResolucionDeConflictos(otroTrait)
-   nuevoTrait = self.clone
+    resolucionDeConflictos = proc do | method, nuevoTrait |
+      if self != otroTrait
+        nuevoTrait.instance_method(method).bind(self).call
+        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+      end
+    end
 
-   otroTrait.instance_methods.each do | method |
-     if nuevoTrait.method_defined? method
-       if self != otroTrait
-         nuevoTrait.instance_method(method).bind(self).call
-         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
-       end
-     else
-       nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
-     end
-   end
-   nuevoTrait
+    definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   public
   def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
-    nuevoTrait = self.clone
-
-    otroTrait.instance_methods.each do | method |
-      if nuevoTrait.method_defined? method
-        if self != otroTrait
-          metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
-          metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-          fold = [metodoNuevoTrait, metodoOtroTrait].inject &funcion
-          methodFold = proc {fold}
-          nuevoTrait.send(:define_method, method, methodFold)
-        end
-      else
-        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
+    resolucionDeConflictos = proc do | method, nuevoTrait |
+      if self != otroTrait
+        metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
+        metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
+        fold = [metodoNuevoTrait, metodoOtroTrait].inject &funcion
+        methodFold = proc {fold}
+        nuevoTrait.send(:define_method, method, methodFold)
       end
     end
-    nuevoTrait
+
+    definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
-    nuevoTrait = self.clone
-    otroTrait.instance_methods.each do | method |
-      if nuevoTrait.method_defined? method
-        if self != otroTrait
-          metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
-          metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
-          metodoQueCoincide = [metodoNuevoTrait, metodoOtroTrait].find &comparador
-          if metodoQueCoincide
-            bloque = proc {metodoQueCoincide}
-            nuevoTrait.send(:define_method, method, bloque)
-          else
-            nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
-          end
+    resolucionDeConflictos = proc do | method, nuevoTrait |
+      if self != otroTrait
+        metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self).call
+        metodoOtroTrait = otroTrait.instance_method(method).bind(self).call
+        metodoQueCoincide = [metodoNuevoTrait, metodoOtroTrait].find &comparador
+        if metodoQueCoincide
+          bloque = proc {metodoQueCoincide}
+          nuevoTrait.send(:define_method, method, bloque)
+        else
+          nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
         end
-      else
-        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
       end
     end
-    nuevoTrait
+
+    definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   def resolucionConConflictos(otroTrait)
-    nuevoTrait = self.clone
-    otroTrait.instance_methods.each do | method |
-      if nuevoTrait.method_defined? method
-        nuevoTrait.remove_method(method) if self != otroTrait
-      else
-        nuevoTrait.send(:define_method, method, otroTrait.instance_method(method))
-      end
+    resolucionDeConflictos = proc do | method, nuevoTrait |
+      nuevoTrait.remove_method(method) if self != otroTrait
     end
-    nuevoTrait
+
+    definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   public
