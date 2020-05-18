@@ -153,10 +153,10 @@ describe 'traits tests' do
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
-   'En este caso toma el Trait de MiTrait'
-   compararPorIgualdad = proc { |a,b| a == b}
+   'En este caso toma el metodo de MiTrait'
+   compararPorIgualdad = proc { |a| a == "hola"}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionMiTrait = clase do
-     uses MiTrait.+ SoloDiceChau, 4, nil, "hola", compararPorIgualdad
+     uses MiTrait.+ SoloDiceChau, 4, nil, compararPorIgualdad
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionMiTrait.new
@@ -164,10 +164,10 @@ describe 'traits tests' do
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
-   'En este caso toma el Trait de SoloDiceChau'
-   compararPorLongitud = proc { |a,b| a.length == b}
+   'En este caso toma el metodo de MiTrait'
+   compararPorLongitud = proc { |a| a.length == 4}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionSoloDiceChau = clase do
-     uses MiTrait.+ SoloDiceChau, 4, nil, 4, compararPorLongitud
+     uses MiTrait.+ SoloDiceChau, 4, nil, compararPorLongitud
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionSoloDiceChau.new
@@ -175,20 +175,22 @@ describe 'traits tests' do
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
-   'En este caso se suman 2 traits'
-   compararPorIgualdad = proc { |a,b| a == b}
+   'En este caso se suman 3 traits'
+   compararPorIgualdadHola = proc { |a| a == "hola"}
+   compararPorIgualdadRompe = proc { |a| a == "rompe"}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
-     uses (MiTrait.+ SoloDiceChau, 4, nil, "hola", compararPorIgualdad).+ Rompe, 4, nil, "rompe", compararPorIgualdad
+     uses (MiTrait.+ SoloDiceChau, 4, nil, compararPorIgualdadHola).+ Rompe, 4, nil, compararPorIgualdadRompe
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
  end
+
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
     'En este caso se suman 2 con diferentes estrategias'
-    compararPorIgualdad = proc { |a,b| a == b}
+    compararPorIgualdad = proc { |a| a == "rompe"}
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias = clase do
-      uses (MiTrait.+ SoloDiceChau).+ Rompe, 4, nil, "rompe", compararPorIgualdad
+      uses (MiTrait.+ SoloDiceChau).+ Rompe, 4, nil, compararPorIgualdad
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias.new
@@ -197,13 +199,24 @@ describe 'traits tests' do
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
     'En este caso al no encontrar el metodo rompe'
-    compararPorIgualdad = proc { |a,b| a == b}
+    compararPorIgualdad = proc { |a| a == "rompe"}
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError = clase do
-      uses MiTrait.+ SoloDiceChau, 4, nil, "rompe", compararPorIgualdad
+      uses MiTrait.+ SoloDiceChau, 4, nil, compararPorIgualdad
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError.new
     expect { mi_clase_con_conflictos_estrategia_4.metodo1 }.to raise_error(StandardError)
+  end
+
+  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+    'En este caso toma el metodo de SoloDiceChau'
+    compararSiComienzaCon = proc { |a| a.start_with?('c') }
+    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith = clase do
+      uses MiTrait.+ SoloDiceChau, 4, nil, compararSiComienzaCon
+    end
+
+    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith.new
+    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("chau")
  end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
