@@ -263,15 +263,20 @@ describe 'traits tests' do
  it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
    ConAlias = clase do
      uses ((MiTrait << {metodo1: :m1Hola}) - :metodo1) +
-              ((SoloDiceChau << {metodo1: :m1Chau}) - :metodo1)
+              ((SoloDiceChau << {metodo1: :m1Chau, metodo2: :m2Chau}) - :metodo1)
 
      def metodo1
        m1Hola + " y " + m1Chau
+     end
+
+     def metodo2
+       m2Chau
      end
    end
 
    con_alias = ConAlias.new
    expect(con_alias.metodo1).to eq("hola y chau")
+   expect(con_alias.metodo2).to eq("chau")
  end
 
  it 'Testeo que borre mas de un metodo con la siguiente forma uses trait - [m1,m2,..etc]' do

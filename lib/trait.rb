@@ -120,9 +120,9 @@ class Trait < Module
   public
   def << (hash)
     nuevoTrait = self.clone
-    old_name = hash.keys[0]
-    new_name = hash[old_name]
-    nuevoTrait.alias_method new_name, old_name
+    hash.each do | old_name, new_name |
+      nuevoTrait.alias_method new_name, old_name
+    end
     nuevoTrait
   end
 end
