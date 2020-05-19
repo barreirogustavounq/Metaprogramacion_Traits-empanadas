@@ -74,11 +74,11 @@ describe 'traits tests' do
  end
 
  it 'Testea metodos diferentes de dos traits incluidos en una clase y luego le sumo la misma clase que antes y no genera error' do
-   MiClase3 = clase do
+   MiClase3Doble = clase do
      uses MiTrait + MiOtroTrait + MiTrait + MiOtroTrait
    end
 
-   tercer_clase = MiClase3.new
+   tercer_clase = MiClase3Doble.new
    expect(tercer_clase.metodo1).to eq("hola")
    expect(tercer_clase.metodo2).to eq("mundo")
  end
