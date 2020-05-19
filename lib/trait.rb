@@ -83,7 +83,7 @@ class Trait < Module
          metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
          metodoOtroTrait = otroTrait.instance_method(method).bind(self)
          method_defined_for_user = proc {
-           funcionDeUsuario.call(metodoOtroTrait.call, metodoNuevoTrait.call)
+           funcionDeUsuario.call(metodoNuevoTrait.call, metodoOtroTrait.call)
          }
          nuevoTrait.send(:define_method, method, method_defined_for_user)
        end

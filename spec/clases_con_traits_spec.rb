@@ -236,7 +236,7 @@ describe 'traits tests' do
     end
 
     mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
-    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false)
+    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false )
   end
 
 
