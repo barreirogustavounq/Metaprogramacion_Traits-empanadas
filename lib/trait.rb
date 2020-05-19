@@ -75,6 +75,20 @@ class Trait < Module
     definirMetodo otroTrait, &resolucionDeConflictos
   end
 
+  def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDeUsuario)
+     resolucionDeConflictos = proc do | method, nuevoTrait |
+       if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
+         metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
+         metodoOtroTrait = otroTrait.instance_method(method).bind(self)
+         method_defined_for_user = proc {
+           funcionDeUsuario.call(metodoOtroTrait.call, metodoNuevoTrait.call)
+         }
+         nuevoTrait.send(:define_method, method, method_defined_for_user)
+       end
+     end
+     definirMetodo otroTrait, &resolucionDeConflictos
+  end
+
   def resolucionConConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
       puts self.instance_method(method).super_method
@@ -96,6 +110,8 @@ class Trait < Module
       terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     when 4
       cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
+    when 5
+      quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     else
       resolucionConConflictos(otroTrait)
     end

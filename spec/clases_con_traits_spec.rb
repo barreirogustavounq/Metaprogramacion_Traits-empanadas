@@ -226,7 +226,20 @@ describe 'traits tests' do
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith.new
     expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("chau")
- end
+  end
+
+  it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
+    'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
+    funcionDelUsuario = proc { |a, b| a.equal? b  }
+    MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
+      uses MiTrait.+ SoloDiceChau, 5, funcionDelUsuario
+    end
+
+    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
+    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false)
+  end
+
+
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
    MiClaseSinConflictos = clase do
