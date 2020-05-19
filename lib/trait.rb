@@ -30,7 +30,7 @@ class Trait < Module
   public
   def segundaEstrategiaResolucionDeConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      if self != otroTrait
+      if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
         metodosSegundaResolucion = proc do
           nuevoTrait.instance_method(method).bind(self).call
           otroTrait.instance_method(method)
@@ -47,7 +47,7 @@ class Trait < Module
     resolucionDeConflictos = proc do | method, nuevoTrait |
       metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
       metodoOtroTrait = otroTrait.instance_method(method).bind(self)
-      if metodoNuevoTrait != metodoOtroTrait
+      if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
         fold = [metodoNuevoTrait.call, metodoOtroTrait.call].inject &funcion
         methodFold = proc {fold}
         nuevoTrait.send(:define_method, method, methodFold)
@@ -59,7 +59,7 @@ class Trait < Module
 
   def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      if self != otroTrait
+      if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
         metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
         metodoOtroTrait = otroTrait.instance_method(method).bind(self)
         metodoQueCoincide = [metodoNuevoTrait.call, metodoOtroTrait.call].find &comparador
@@ -77,7 +77,9 @@ class Trait < Module
 
   def resolucionConConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      nuevoTrait.remove_method(method) if self != otroTrait
+      puts self.instance_method(method).super_method
+      puts otroTrait.instance_method(method).super_method
+      nuevoTrait.remove_method(method) if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
