@@ -104,7 +104,7 @@ class Trait < Module
   end
 
   public
-  def + (otroTrait, estrategia = nil, funcion = nil, comparador = nil)
+  def + (otroTrait, estrategia = nil, funcion = nil)
     case estrategia
     when 1
       primeraEstrategiaResolucionDeConflictos(otroTrait)
@@ -113,7 +113,7 @@ class Trait < Module
     when 3
       terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     when 4
-      cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
+      cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     when 5
       quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     else
