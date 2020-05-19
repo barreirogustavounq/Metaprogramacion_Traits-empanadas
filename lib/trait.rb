@@ -15,7 +15,11 @@ class Trait < Module
       unless nuevoTrait.method_defined? method
         nuevoTrait.send(:define_method, method, otroTrait.instance_method(method) )
       else
-        resolucionDeConflictos.(method, nuevoTrait)
+        metodoNuevoTrait = nuevoTrait.instance_method(method)
+        metodoOtroTrait = otroTrait.instance_method(method)
+        if metodoNuevoTrait.source_location != metodoOtroTrait.source_location
+          resolucionDeConflictos.(method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait)
+        end
       end
     end
     nuevoTrait
@@ -29,16 +33,12 @@ class Trait < Module
 
   public
   def segundaEstrategiaResolucionDeConflictos(otroTrait)
-    resolucionDeConflictos = proc do | method, nuevoTrait |
-      metodoNuevoTrait = nuevoTrait.instance_method(method)
-      metodoOtroTrait = otroTrait.instance_method(method)
-      if metodoNuevoTrait.source_location != metodoOtroTrait.source_location
-        metodosSegundaResolucion = proc do
-          metodoNuevoTrait.bind(self).call
-          metodoOtroTrait
-        end
-        nuevoTrait.send(:define_method, method, metodosSegundaResolucion.call)
+    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
+      metodosSegundaResolucion = proc do
+        metodoNuevoTrait.bind(self).call
+        metodoOtroTrait
       end
+      nuevoTrait.send(:define_method, method, metodosSegundaResolucion.call)
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
@@ -46,31 +46,23 @@ class Trait < Module
 
   public
   def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
-    resolucionDeConflictos = proc do | method, nuevoTrait |
-      metodoNuevoTrait = nuevoTrait.instance_method(method)
-      metodoOtroTrait = otroTrait.instance_method(method)
-      if metodoNuevoTrait.source_location != metodoOtroTrait.source_location
-        fold = [metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call].inject &funcion
-        methodFold = proc {fold}
-        nuevoTrait.send(:define_method, method, methodFold)
-      end
+    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
+      fold = [metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call].inject &funcion
+      methodFold = proc {fold}
+      nuevoTrait.send(:define_method, method, methodFold)
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
-    resolucionDeConflictos = proc do | method, nuevoTrait |
-      metodoNuevoTrait = nuevoTrait.instance_method(method)
-      metodoOtroTrait = otroTrait.instance_method(method)
-      if metodoNuevoTrait.source_location != metodoOtroTrait.source_location
-        metodoQueCoincide = [metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call].find &comparador
-        if metodoQueCoincide
-          bloque = proc {metodoQueCoincide}
-          nuevoTrait.send(:define_method, method, bloque)
-        else
-          nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
-        end
+    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
+      metodoQueCoincide = [metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call].find &comparador
+      if metodoQueCoincide
+        bloque = proc {metodoQueCoincide}
+        nuevoTrait.send(:define_method, method, bloque)
+      else
+        nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
       end
     end
 
@@ -78,26 +70,18 @@ class Trait < Module
   end
 
   def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDeUsuario)
-     resolucionDeConflictos = proc do | method, nuevoTrait |
-       if self.instance_method(method).source_location != otroTrait.instance_method(method).source_location
-         metodoNuevoTrait = nuevoTrait.instance_method(method).bind(self)
-         metodoOtroTrait = otroTrait.instance_method(method).bind(self)
-         method_defined_for_user = proc {
-           funcionDeUsuario.call(metodoNuevoTrait.call, metodoOtroTrait.call)
-         }
-         nuevoTrait.send(:define_method, method, method_defined_for_user)
-       end
+     resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
+       method_defined_for_user = proc {
+         funcionDeUsuario.call(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
+       }
+       nuevoTrait.send(:define_method, method, method_defined_for_user)
      end
      definirMetodo otroTrait, &resolucionDeConflictos
   end
 
   def resolucionConConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      metodoNuevoTrait = nuevoTrait.instance_method(method)
-      metodoOtroTrait = otroTrait.instance_method(method)
-      if metodoNuevoTrait.source_location != metodoOtroTrait.source_location
-        nuevoTrait.remove_method(method)
-      end
+      nuevoTrait.remove_method(method)
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
