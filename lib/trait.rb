@@ -70,10 +70,7 @@ class Trait < Module
 
   def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDeUsuario)
      resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-       method_defined_for_user = proc {
-         funcionDeUsuario.(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
-       }
-       nuevoTrait.send(:define_method, method, method_defined_for_user)
+       funcionDeUsuario.(method, nuevoTrait, metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
      end
      definirMetodo otroTrait, &resolucionDeConflictos
   end

@@ -230,13 +230,22 @@ describe 'traits tests' do
 
   it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
-    funcionDelUsuario = proc { |a, b| a.equal? b  }
-    MiClaseConConflictosResueltosConQuintaEstretegiaCondicion = clase do
-      uses MiTrait.+ SoloDiceChau, 5, funcionDelUsuario
+    # El usuario puede obtener y utilizar:
+    # method: nombre del metodo conflictivo.
+    # nuevoTrait: trait resultante.
+    # metodoNueboTrait: metodo del primer trait, asociado al nombre del metodo conflictivo.
+    # metodoOtroTrait: metodo del segundo trait, asociado al nombre del metodo conflictivo.
+
+    resolucionDeConflictos = proc do | method, nuevoTrait |
+      nuevoTrait.remove_method(method)
+    end
+    MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
+      uses MiTrait.+ SoloDiceChau, 5, resolucionDeConflictos
     end
 
-    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicion.new
-    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false )
+    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
+    expect { mi_clase_con_conflictos_estrategia_5.metodo1 }.to raise_error(NoMethodError)
+    expect(mi_clase_con_conflictos_estrategia_5.metodo2).to eq("chau")
   end
 
 
