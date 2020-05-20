@@ -230,6 +230,30 @@ describe 'traits tests' do
 
   it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
+
+    # El usuario puede obtener y utilizar:
+    # method: nombre del metodo conflictivo.
+    # nuevoTrait: trait resultante.
+    # metodoNueboTrait: metodo del primer trait, asociado al nombre del metodo conflictivo.
+    # metodoOtroTrait: metodo del segundo trait, asociado al nombre del metodo conflictivo.
+
+    resultanteDeEstrategia = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
+      estrategiaDelUsuario = proc do
+        proc { |a, b| a.equal? b  }.(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
+      end
+      nuevoTrait.send(:define_method, method, estrategiaDelUsuario)
+    end
+    MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
+      uses MiTrait.+ SoloDiceChau, 5, resultanteDeEstrategia
+    end
+
+    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
+    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false)
+  end
+
+  it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
+    'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
+
     # El usuario puede obtener y utilizar:
     # method: nombre del metodo conflictivo.
     # nuevoTrait: trait resultante.
@@ -239,11 +263,11 @@ describe 'traits tests' do
     resolucionDeConflictos = proc do | method, nuevoTrait |
       nuevoTrait.remove_method(method)
     end
-    MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
+    MiClaseConConflictosResueltosConQuintaEstretegiaCondicion = clase do
       uses MiTrait.+ SoloDiceChau, 5, resolucionDeConflictos
     end
 
-    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
+    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicion.new
     expect { mi_clase_con_conflictos_estrategia_5.metodo1 }.to raise_error(NoMethodError)
     expect(mi_clase_con_conflictos_estrategia_5.metodo2).to eq("chau")
   end
@@ -272,20 +296,20 @@ describe 'traits tests' do
  it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
    ConAlias = clase do
      uses ((MiTrait << {metodo1: :m1Hola}) - :metodo1) +
-              ((SoloDiceChau << {metodo1: :m1Chau, metodo2: :m2Chau}) - :metodo1)
+              ((SoloDiceChau << {metodo1: :m1Chau, metodo2: :m2Chau}) - :metodo1 - :metodo2)
 
      def metodo1
        m1Hola + " y " + m1Chau
      end
 
      def metodo2
-       m2Chau
+       m2Chau+"!!"
      end
    end
 
    con_alias = ConAlias.new
    expect(con_alias.metodo1).to eq("hola y chau")
-   expect(con_alias.metodo2).to eq("chau")
+   expect(con_alias.metodo2).to eq("chau!!")
  end
 
  it 'Testeo que borre mas de un metodo con la siguiente forma uses trait - [m1,m2,..etc]' do

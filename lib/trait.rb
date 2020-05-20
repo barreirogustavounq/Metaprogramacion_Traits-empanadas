@@ -68,10 +68,7 @@ class Trait < Module
     definirMetodo otroTrait, &resolucionDeConflictos
   end
 
-  def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDeUsuario)
-     resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-       funcionDeUsuario.(method, nuevoTrait, metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
-     end
+  def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &resolucionDeConflictos)
      definirMetodo otroTrait, &resolucionDeConflictos
   end
 
