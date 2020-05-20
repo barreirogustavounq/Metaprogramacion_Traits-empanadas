@@ -47,9 +47,8 @@ class Trait < Module
   public
   def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
     resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      fold = [metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call].inject &funcion
-      methodFold = proc {fold}
-      nuevoTrait.send(:define_method, method, methodFold)
+      fold = proc { funcion.(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call) }
+      nuevoTrait.send(:define_method, method, fold)
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
@@ -72,7 +71,7 @@ class Trait < Module
   def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDeUsuario)
      resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
        method_defined_for_user = proc {
-         funcionDeUsuario.call(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
+         funcionDeUsuario.(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
        }
        nuevoTrait.send(:define_method, method, method_defined_for_user)
      end
