@@ -84,13 +84,10 @@ describe 'traits tests' do
  end
 
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
-    MiClaseConConflictos = clase do
-      uses MiTrait + SoloDiceChau  # Debería lanzar una excepción
-    end
 
-    mi_clase_con_conflictos = MiClaseConConflictos.new
-    expect { mi_clase_con_conflictos.metodo1 }.to raise_error(NoMethodError)
-    expect(mi_clase_con_conflictos.metodo2).to eq("chau")
+    expect { MiClaseConConflictos = clase do
+      uses MiTrait + SoloDiceChau
+    end}.to raise_error(StandardError)
   end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 1' do
@@ -199,7 +196,7 @@ describe 'traits tests' do
     'En este caso se suman 2 con diferentes estrategias'
     compararPorIgualdad = proc { |a| a == "rompe"}
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias = clase do
-      uses (MiTrait.+ SoloDiceChau).+ Rompe, 4, compararPorIgualdad
+      uses (MiTrait.+ MiOtroTrait).+ Rompe, 4, compararPorIgualdad
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias.new
@@ -331,5 +328,5 @@ describe 'traits tests' do
    borraMetodosSinLista = BorraTodoLosMetodosSinLista.new
    expect { borraMetodosSinLista.metodo1 }.to raise_error(NoMethodError)
    expect { borraMetodosSinLista.metodo2 }.to raise_error(NoMethodError)
- end
-end
+   end
+  end

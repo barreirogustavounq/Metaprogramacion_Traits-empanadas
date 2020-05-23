@@ -74,7 +74,7 @@ class Trait < Module
 
   def resolucionConConflictos(otroTrait)
     resolucionDeConflictos = proc do | method, nuevoTrait |
-      nuevoTrait.remove_method(method)
+      raise StandardError
     end
 
     definirMetodo otroTrait, &resolucionDeConflictos
