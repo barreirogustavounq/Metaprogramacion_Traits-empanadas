@@ -61,7 +61,7 @@ class Trait < Module
         bloque = proc {metodoQueCoincide}
         nuevoTrait.send(:define_method, method, bloque)
       else
-        nuevoTrait.send(:define_method, method, proc{ raise(StandardError)})
+        raise StandardError
       end
     end
 
@@ -73,7 +73,7 @@ class Trait < Module
   end
 
   def resolucionConConflictos(otroTrait)
-    resolucionDeConflictos = proc do | method, nuevoTrait |
+    resolucionDeConflictos = proc do
       raise StandardError
     end
 
