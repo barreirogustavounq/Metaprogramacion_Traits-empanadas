@@ -87,7 +87,7 @@ describe 'traits tests' do
 
     expect { MiClaseConConflictos = clase do
       uses MiTrait + SoloDiceChau
-    end}.to raise_error(StandardError)
+    end}.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 1' do
@@ -209,7 +209,7 @@ describe 'traits tests' do
 
     expect { MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError = clase do
       uses MiTrait.+ SoloDiceChau, 4, compararPorIgualdad
-    end }.to raise_error(StandardError)
+    end }.to raise_error(StandardError, 'Ningún método coincide')
   end
 
   it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
@@ -226,35 +226,22 @@ describe 'traits tests' do
   it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
 
-    # El usuario puede obtener y utilizar:
-    # method: nombre del metodo conflictivo.
-    # nuevoTrait: trait resultante.
-    # metodoNueboTrait: metodo del primer trait, asociado al nombre del metodo conflictivo.
-    # metodoOtroTrait: metodo del segundo trait, asociado al nombre del metodo conflictivo.
+    funcionDelUsuario = proc { |a, b| (a.equal? b) ? a : (raise StandardError, 'No coinciden los métodos con conflictos.') }
 
-    resultanteDeEstrategia = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      estrategiaDelUsuario = proc do
-        proc { |a, b| a.equal? b  }.(metodoNuevoTrait.bind(self).call, metodoOtroTrait.bind(self).call)
-      end
-      nuevoTrait.send(:define_method, method, estrategiaDelUsuario)
-    end
-    MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
-      uses MiTrait.+ SoloDiceChau, 5, resultanteDeEstrategia
-    end
-
-    mi_clase_con_conflictos_estrategia_5 = MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith.new
-    expect(mi_clase_con_conflictos_estrategia_5.metodo1).to eq(false)
+    expect { MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
+      uses MiTrait.+ SoloDiceChau, 5, funcionDelUsuario
+    end }.to raise_error(StandardError, 'No coinciden los métodos con conflictos.')
   end
 
   it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
 
     resolucionDeConflictos = proc do
-      raise NoMethodError
+      raise StandardError, 'Conflictos entre métodos con mismo nombre.'
     end
     expect { MiClaseConConflictosResueltosConQuintaEstretegiaCondicion = clase do
       uses MiTrait.+ SoloDiceChau, 5, resolucionDeConflictos
-    end }.to raise_error(NoMethodError)
+    end }.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
