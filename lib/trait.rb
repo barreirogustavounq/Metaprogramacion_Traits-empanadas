@@ -1,3 +1,10 @@
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_tira_excepcion.rb'
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_que_elige_un_metodo.rb'
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_en_orden_de_aparicion.rb'
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_con_funcion_fold.rb'
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_que_aplica_condicion.rb'
+require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_definida_por_el_usuario.rb'
+
 class Trait < Module
 
   def includeIn(klass)
@@ -26,82 +33,11 @@ class Trait < Module
   end
 
   public
-  def primeraEstrategiaResolucionDeConflictos(otroTrait)
-    resolucionDeConflictos = proc {}
-    definirMetodo(otroTrait, &resolucionDeConflictos)
-  end
-
-  public
-  def segundaEstrategiaResolucionDeConflictos(otroTrait)
-    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      metodosSegundaResolucion = proc do
-        metodoNuevoTrait.call
-        metodoOtroTrait
-      end
-      nuevoTrait.send(:define_method, method, metodosSegundaResolucion.call)
-    end
-
-    definirMetodo otroTrait, &resolucionDeConflictos
-  end
-
-  public
-  def terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
-    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      fold = proc { funcion.(metodoNuevoTrait.call, metodoOtroTrait.call) }
-      nuevoTrait.send(:define_method, method, fold)
-    end
-
-    definirMetodo otroTrait, &resolucionDeConflictos
-  end
-
-  def cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &comparador)
-    resolucionDeConflictos = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      metodoQueCoincide = [metodoNuevoTrait.call, metodoOtroTrait.call].find &comparador
-      if metodoQueCoincide
-        bloque = proc {metodoQueCoincide}
-        nuevoTrait.send(:define_method, method, bloque)
-      else
-        raise StandardError, 'Ningún método coincide'
-      end
-    end
-
-    definirMetodo otroTrait, &resolucionDeConflictos
-  end
-
-  def quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcionDelUsuario)
-    estrategiaDelUsuario = proc do | method, nuevoTrait, metodoNuevoTrait, metodoOtroTrait |
-      metodoqueCoincide = funcionDelUsuario.(metodoNuevoTrait.call, metodoOtroTrait.call)
-      if metodoqueCoincide
-        bloque = proc { metodoqueCoincide }
-        nuevoTrait.send(:define_method, method, bloque)
-      end
-    end
-     definirMetodo otroTrait, &estrategiaDelUsuario
-  end
-
-  def resolucionConConflictos(otroTrait)
-    resolucionDeConflictos = proc do
-      raise StandardError, 'Conflictos entre métodos con mismo nombre.'
-    end
-
-    definirMetodo otroTrait, &resolucionDeConflictos
-  end
-
-  public
-  def + (otroTrait, estrategia = nil, funcion = nil)
-    case estrategia
-    when 1
-      primeraEstrategiaResolucionDeConflictos(otroTrait)
-    when 2
-      segundaEstrategiaResolucionDeConflictos(otroTrait)
-    when 3
-      terceraEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
-    when 4
-      cuartaEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
-    when 5
-      quintaEstrategiaDeResolucionDeConflictos(otroTrait, &funcion)
+  def + (otroTrait, estrategia = nil)
+    if estrategia
+      estrategia.resolverConflictos(self, otroTrait)
     else
-      resolucionConConflictos(otroTrait)
+      ResolucionTiraExcepcion.new.resolverConflictos(self, otroTrait)
     end
   end
 

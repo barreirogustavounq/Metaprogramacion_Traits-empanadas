@@ -90,9 +90,18 @@ describe 'traits tests' do
     end}.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
 
+  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
+    MiClaseSinConflictos = clase do
+      uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
+    end
+
+    mi_clase_sin_conflictos = MiClaseSinConflictos.new
+    expect(mi_clase_sin_conflictos.metodo1).to eq("hola")
+  end
+
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 1' do
    MiClaseConConflictosResueltosConPrimeraEstretegia = clase do
-     uses MiTrait.+ SoloDiceChau, 1
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueEligeUnMetodo.new
    end
 
    mi_clase_con_conflictos_estrategia_1 = MiClaseConConflictosResueltosConPrimeraEstretegia.new
@@ -102,7 +111,7 @@ describe 'traits tests' do
 
  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 2' do
    MiClaseConConflictosResueltosConSegundaEstretegia = clase do
-     uses (MiTrait.+ SoloDiceChau, 2).+ OtroTrait, 2
+     uses (MiTrait.+ SoloDiceChau, ResolucionDeConflictosEnOrdenDeAparicion.new).+ OtroTrait, ResolucionDeConflictosEnOrdenDeAparicion.new
    end
 
    mi_clase_con_conflictos_estrategia_2 = MiClaseConConflictosResueltosConSegundaEstretegia.new
@@ -114,7 +123,7 @@ describe 'traits tests' do
    suma = proc { |a, b| a + b }
 
    MiClaseConConflictosResueltosConTercerEstrategiaSuma = clase do
-     uses MiTrait.+ SoloDiceChau, 3, suma
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosConFuncionFold.new(suma)
    end
 
    mi_clase_con_conflictos_estrategia_3_suma = MiClaseConConflictosResueltosConTercerEstrategiaSuma.new
@@ -126,7 +135,7 @@ describe 'traits tests' do
    upcase = proc { |a, b| a.upcase + b.upcase }
 
    MiClaseConConflictosResueltosConTercerEstrategiaUpcase = clase do
-     uses MiTrait.+ SoloDiceChau, 3, upcase
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosConFuncionFold.new(upcase)
    end
 
    mi_clase_con_conflictos_estrategia_3_suma_upcase = MiClaseConConflictosResueltosConTercerEstrategiaUpcase.new
@@ -138,7 +147,7 @@ describe 'traits tests' do
    max = proc { |a,b| a.length > b.length ? a : b }
 
    MiClaseConConflictosResueltosConTercerEstrategiaMax = clase do
-     uses MiTrait.+ SoloDiceChau, 3, max
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosConFuncionFold.new(max)
    end
 
    mi_clase_con_conflictos_estrategia_3_max = MiClaseConConflictosResueltosConTercerEstrategiaMax.new
@@ -150,7 +159,7 @@ describe 'traits tests' do
    longitudDeMax = proc { |a,b| a.length >= b.length ? a.length : b.length }
 
    MiClaseConConflictosResueltosConTercerEstrategiaLongitudDeMax = clase do
-     uses MiTrait.+ SoloDiceChau, 3, longitudDeMax
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosConFuncionFold.new(longitudDeMax)
    end
 
    mi_clase_con_conflictos_estrategia_3_longitud_de_max = MiClaseConConflictosResueltosConTercerEstrategiaLongitudDeMax.new
@@ -162,7 +171,7 @@ describe 'traits tests' do
    'En este caso toma el metodo de MiTrait'
    compararPorIgualdad = proc { |a| a == "hola"}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionMiTrait = clase do
-     uses MiTrait.+ SoloDiceChau, 4, compararPorIgualdad
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueAplicaCondicion.new(compararPorIgualdad)
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionMiTrait.new
@@ -173,7 +182,7 @@ describe 'traits tests' do
    'En este caso toma el metodo de MiTrait'
    compararPorLongitud = proc { |a| a.length == 4}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionSoloDiceChau = clase do
-     uses MiTrait.+ SoloDiceChau, 4, compararPorLongitud
+     uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueAplicaCondicion.new(compararPorLongitud)
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionSoloDiceChau.new
@@ -185,7 +194,7 @@ describe 'traits tests' do
    compararPorIgualdadHola = proc { |a| a == "hola"}
    compararPorIgualdadRompe = proc { |a| a == "rompe"}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError = clase do
-     uses (MiTrait.+ SoloDiceChau, 4, compararPorIgualdadHola).+ Rompe, 4, compararPorIgualdadRompe
+     uses (MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueAplicaCondicion.new(compararPorIgualdadHola)).+ Rompe, ResolucionDeConflictosQueAplicaCondicion.new(compararPorIgualdadRompe)
    end
 
    mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionError.new
@@ -196,7 +205,7 @@ describe 'traits tests' do
     'En este caso se suman 2 con diferentes estrategias'
     compararPorIgualdad = proc { |a| a == "rompe"}
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias = clase do
-      uses (MiTrait.+ MiOtroTrait).+ Rompe, 4, compararPorIgualdad
+      uses (MiTrait.+ MiOtroTrait).+ Rompe, ResolucionDeConflictosQueAplicaCondicion.new(compararPorIgualdad)
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias.new
@@ -208,7 +217,7 @@ describe 'traits tests' do
     compararPorIgualdad = proc { |a| a == "rompe"}
 
     expect { MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStandarError = clase do
-      uses MiTrait.+ SoloDiceChau, 4, compararPorIgualdad
+      uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueAplicaCondicion.new(compararPorIgualdad)
     end }.to raise_error(StandardError, 'Ningún método coincide')
   end
 
@@ -216,7 +225,7 @@ describe 'traits tests' do
     'En este caso toma el metodo de SoloDiceChau'
     compararSiComienzaCon = proc { |a| a.start_with?('c') }
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith = clase do
-      uses MiTrait.+ SoloDiceChau, 4, compararSiComienzaCon
+      uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueAplicaCondicion.new(compararSiComienzaCon)
     end
 
     mi_clase_con_conflictos_estrategia_4 = MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith.new
@@ -229,7 +238,7 @@ describe 'traits tests' do
     funcionDelUsuario = proc { |a, b| (a.equal? b) ? a : (raise StandardError, 'No coinciden los métodos con conflictos.') }
 
     expect { MiClaseConConflictosResueltosConQuintaEstretegiaCondicionStarWith = clase do
-      uses MiTrait.+ SoloDiceChau, 5, funcionDelUsuario
+      uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosDefinidaPorElUsuario.new(funcionDelUsuario)
     end }.to raise_error(StandardError, 'No coinciden los métodos con conflictos.')
   end
 
@@ -240,18 +249,9 @@ describe 'traits tests' do
       raise StandardError, 'Conflictos entre métodos con mismo nombre.'
     end
     expect { MiClaseConConflictosResueltosConQuintaEstretegiaCondicion = clase do
-      uses MiTrait.+ SoloDiceChau, 5, resolucionDeConflictos
+      uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosDefinidaPorElUsuario.new(resolucionDeConflictos)
     end }.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
-
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
-   MiClaseSinConflictos = clase do
-     uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
-   end
-
-   mi_clase_sin_conflictos = MiClaseSinConflictos.new
-   expect(mi_clase_sin_conflictos.metodo1).to eq("hola")
- end
 
  it 'Testeo metodos iguales de dos traits diferentes incluidos en una clase. Pero sacando el metodo de un trait' do
    TodoBienTodoLegal = clase do
