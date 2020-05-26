@@ -15,6 +15,10 @@ class Trait < Module
     @metodos[nombre_metodo] = bloque
   end
 
+  def iliminarMetodo(nombre_metodo)
+    @metodos.delete(nombre_metodo)
+  end
+
   def methodos()
     @metodos
   end
@@ -59,6 +63,7 @@ class Trait < Module
     trait_Methods = nuevoTrait.instance_methods
     [*element].each do |mtd|
       if trait_Methods.include? mtd
+        nuevoTrait.iliminarMetodo(mtd)
         nuevoTrait.remove_method(mtd)
       end
     end
