@@ -3,25 +3,25 @@ require 'objetos_inline'
 
 describe 'traits tests' do
 
-  MiTrait = trait do
+  MiTrait = trait "MiTrait" do
     def metodo1
       "hola"
     end
   end
 
-  OtroTrait = trait do
+  OtroTrait = trait "OtroTrait" do
     def metodo1
       "hello"
     end
   end
 
-  MiOtroTrait = trait do
+  MiOtroTrait = trait "MiOtroTrait" do
     def metodo2
       "mundo"
     end
   end
 
-  SoloDiceChau = trait do
+  SoloDiceChau = trait "SoloDiceChau" do
     def metodo1
       "chau"
     end
@@ -31,13 +31,13 @@ describe 'traits tests' do
     end
   end
 
-  Rompe = trait do
+  Rompe = trait "Rompe" do
     def metodo1
       "rompe"
     end
   end
 
- it 'Testea el metodo de un trait incluido en una clase' do
+ it 'Agrego trait a una clase y obtengo los metodos de la clase resultante' do
    MiClase = clase do
      uses MiTrait
 
@@ -51,7 +51,7 @@ describe 'traits tests' do
    expect(una_clase.metodo2('!')).to eq("mundo!")
  end
 
- it 'Testea el metodo de una clase con mismo nonmbre al de el trait incluido y gana la implementación de la clase' do
+ it 'Agrego un trait y ambos tienen un metodo con el mismo nombre, quedando el metodo de la clase' do
    MiClase2 = clase do
      def metodo1
        "chau"
@@ -64,7 +64,7 @@ describe 'traits tests' do
    expect(segunda_clase.metodo1).to eq("chau")
  end
 
- it 'Testea metodos diferentes de dos traits incluidos en una clase' do
+ it 'Agrego dos traits a una clase y verifico que se en encuentren los metodos de esos trait dentro de la clase ' do
    MiClase3 = clase do
      uses MiTrait + MiOtroTrait
    end
@@ -73,7 +73,7 @@ describe 'traits tests' do
    expect(tercer_clase.metodo2).to eq("mundo")
  end
 
- it 'Testea metodos diferentes de dos traits incluidos en una clase y luego le sumo la misma clase que antes y no genera error' do
+ it 'agrego dos traits dos veces a la clase' do
    MiClase3Doble = clase do
      uses MiTrait + MiOtroTrait + MiTrait + MiOtroTrait
    end
@@ -83,14 +83,14 @@ describe 'traits tests' do
    expect(tercer_clase.metodo2).to eq("mundo")
  end
 
-  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
+  it 'agrego dos traits y segun la estrategia por defecto arroja un error' do
 
     expect { MiClaseConConflictos = clase do
       uses MiTrait + SoloDiceChau
     end}.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
 
-  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase' do
+  it 'agrego dos veces el mismo trait y wao equivale a agregar solo una vez el trait' do
     MiClaseSinConflictos = clase do
       uses MiTrait + MiTrait # No debería lanzar una excepción, es equivalente a usar MiTrait
     end
@@ -99,7 +99,7 @@ describe 'traits tests' do
     expect(mi_clase_sin_conflictos.metodo1).to eq("hola")
   end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 1' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosQueEligeUnMetodo' do
    MiClaseConConflictosResueltosConPrimeraEstretegia = clase do
      uses MiTrait.+ SoloDiceChau, ResolucionDeConflictosQueEligeUnMetodo.new
    end
@@ -109,7 +109,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_1.metodo2).to eq("chau")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 2' do
+ it 'Agrego traits y los sumo con diferentes estrategias de resolicion de conflictos ' do
    MiClaseConConflictosResueltosConSegundaEstretegia = clase do
      uses (MiTrait.+ SoloDiceChau, ResolucionDeConflictosEnOrdenDeAparicion.new).+ OtroTrait, ResolucionDeConflictosEnOrdenDeAparicion.new
    end
@@ -118,8 +118,8 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_2.metodo1).to eq("hello")
    expect(mi_clase_con_conflictos_estrategia_2.metodo2).to eq("chau")
  end
- 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Suma' do
+
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosConFuncionFold utilizando la funcion suma' do
    suma = proc { |a, b| a + b }
 
    MiClaseConConflictosResueltosConTercerEstrategiaSuma = clase do
@@ -131,7 +131,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_suma.metodo2).to eq("chau")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Suma y Upcase' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosConFuncionFold utilizando la funcion Suma y Upcase' do
    upcase = proc { |a, b| a.upcase + b.upcase }
 
    MiClaseConConflictosResueltosConTercerEstrategiaUpcase = clase do
@@ -143,7 +143,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_suma_upcase.metodo2).to eq("chau")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Max' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosConFuncionFold utlizando funcion Max' do
    max = proc { |a,b| a.length > b.length ? a : b }
 
    MiClaseConConflictosResueltosConTercerEstrategiaMax = clase do
@@ -155,7 +155,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_max.metodo2).to eq("chau")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 3 - funcion Longitud de Max' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosConFuncionFold utilizando la funcion Longitud de Max' do
    longitudDeMax = proc { |a,b| a.length >= b.length ? a.length : b.length }
 
    MiClaseConConflictosResueltosConTercerEstrategiaLongitudDeMax = clase do
@@ -167,7 +167,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_3_longitud_de_max.metodo2).to eq("chau")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion donde la condiciion es compara por igualdad' do
    'En este caso toma el metodo de MiTrait'
    compararPorIgualdad = proc { |a| a == "hola"}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionMiTrait = clase do
@@ -178,7 +178,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("hola")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion donde la condicion es comparar por longuitud' do
    'En este caso toma el metodo de MiTrait'
    compararPorLongitud = proc { |a| a.length == 4}
    MiClaseConConflictosResueltosConCuartaEstretegiaCondicionSoloDiceChau = clase do
@@ -189,7 +189,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("hola")
  end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+ it 'Agrego tres traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion ' do
    'En este caso se suman 3 traits'
    compararPorIgualdadHola = proc { |a| a == "hola"}
    compararPorIgualdadRompe = proc { |a| a == "rompe"}
@@ -201,7 +201,7 @@ describe 'traits tests' do
    expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
  end
 
-  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+  it 'Agrego tres traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion utlizando 2 estrategias diferentes' do
     'En este caso se suman 2 con diferentes estrategias'
     compararPorIgualdad = proc { |a| a == "rompe"}
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionConDiferentesEstrategias = clase do
@@ -212,7 +212,7 @@ describe 'traits tests' do
     expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("rompe")
   end
 
- it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+ it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion usando como condicion la comparacion por igualdad' do
     'En este caso al no encontrar el metodo rompe'
     compararPorIgualdad = proc { |a| a == "rompe"}
 
@@ -221,7 +221,7 @@ describe 'traits tests' do
     end }.to raise_error(StandardError, 'Ningún método coincide')
   end
 
-  it 'Testeo que no haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 4' do
+  it 'Agrego dos traits diferentes incluidos en una clase usando ResolucionDeConflictosQueAplicaCondicion donde la condicion compara la primer letra del resultado ' do
     'En este caso toma el metodo de SoloDiceChau'
     compararSiComienzaCon = proc { |a| a.start_with?('c') }
     MiClaseConConflictosResueltosConCuartaEstretegiaCondicionStarWith = clase do
@@ -232,7 +232,7 @@ describe 'traits tests' do
     expect(mi_clase_con_conflictos_estrategia_4.metodo1).to eq("chau")
   end
 
-  it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
+  it 'Cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
 
     funcionDelUsuario = proc { |a, b| (a.equal? b) ? a : (raise StandardError, 'No coinciden los métodos con conflictos.') }
@@ -242,7 +242,7 @@ describe 'traits tests' do
     end }.to raise_error(StandardError, 'No coinciden los métodos con conflictos.')
   end
 
-  it 'Testeo que cuando haya conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
+  it 'al haber conflictos en metodos iguales de dos traits diferentes incluidos en una clase usando la estrategia 5' do
     'En este caso el usuario va a definir una funcion con la cual tratar a los metodos con conflictos'
 
     resolucionDeConflictos = proc do
@@ -253,7 +253,7 @@ describe 'traits tests' do
     end }.to raise_error(StandardError, 'Conflictos entre métodos con mismo nombre.')
   end
 
- it 'Testeo metodos iguales de dos traits diferentes incluidos en una clase. Pero sacando el metodo de un trait' do
+ it 'al agregar dos traits diferentes incluidos en una clase. Pero sacando el metodo de un trait' do
    TodoBienTodoLegal = clase do
      uses MiTrait + (SoloDiceChau - :metodo1)
    end
@@ -263,7 +263,7 @@ describe 'traits tests' do
    expect(todo_bien_todo_legal.metodo2).to eq("chau")
  end
 
- it 'Testeo metodo que retorna un string compuesto por el resultado de los metodos de dos Traits' do
+ it 'Se testea el funcionamiento de alias' do
    ConAlias = clase do
      uses ((MiTrait << {metodo1: :m1Hola}) - :metodo1) +
               ((SoloDiceChau << {metodo1: :m1Chau, metodo2: :m2Chau}) - :metodo1 - :metodo2)

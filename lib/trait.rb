@@ -6,6 +6,18 @@ require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_
 require './lib/estrategias_de_resolucion_de_conflictos/resolucion_de_conflictos_definida_por_el_usuario.rb'
 
 class Trait < Module
+  def initialize(nombre_del_trait)
+    @nombre = nombre_del_trait
+    @metodos = Hash.new
+  end
+
+  def agregarMetodo(nombre_metodo, &bloque)
+    @metodos[nombre_metodo] = bloque
+  end
+
+  def methodos()
+    @metodos
+  end
 
   def includeIn(klass)
     self.instance_methods.each do | method |
